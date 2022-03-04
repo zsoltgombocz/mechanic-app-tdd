@@ -55,7 +55,7 @@
 
                             <div class="ml-12">
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    Komit.
+                                    Komit. Plusz egy https://www.youtube.com/watch?v=dQw4w9WgXcQ
                                 </div>
                             </div>
                         </div>
