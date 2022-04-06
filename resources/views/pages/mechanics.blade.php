@@ -37,4 +37,10 @@
                     <!-- End Default Table Example -->
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    <button onclick="event.preventDefault();" class="btn btn-primary w-100" data-bs-toggle="modal"
+                        data-bs-target="#mechanicadd">Hozzáadás</button>
+                </div>
+            </div>
         @endsection
