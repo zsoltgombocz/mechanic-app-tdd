@@ -55,15 +55,19 @@
                                         <h5 class="card-title text-center pb-0 fs-4">Belépés</h5>
                                         <p class="text-center small">Add meg a belépési azonosítód és a jelszavad</p>
                                     </div>
-
-                                    <form class="row g-3 needs-validation" novalidate>
-
+                                    @if ($errors->any())
+                                        @foreach ($errors->all() as $error)
+                                            <div class="col-12 text-danger text-center">{{ $error }}</div>
+                                        @endforeach
+                                    @endif
+                                    <form class="row g-3 needs-validation" novalidate method="POST" action="/login">
+                                        @csrf
                                         <div class="col-12">
                                             <label for="yourUsername" class="form-label">Azonosító</label>
                                             <div class="input-group has-validation">
-                                                <input type="text" name="username" class="form-control"
+                                                <input type="text" name="login_id" class="form-control"
                                                     id="yourUsername" required>
-                                                <div class="invalid-feedback">Please enter your username.</div>
+                                                <div class="invalid-feedback">A mező kitöltése kötelező!</div>
                                             </div>
                                         </div>
 
@@ -71,7 +75,7 @@
                                             <label for="yourPassword" class="form-label">Jelszó</label>
                                             <input type="password" name="password" class="form-control"
                                                 id="yourPassword" required>
-                                            <div class="invalid-feedback">Please enter your password!</div>
+                                            <div class="invalid-feedback">A mező kitöltése kötelező!</div>
                                         </div>
 
                                         <div class="col-12">
