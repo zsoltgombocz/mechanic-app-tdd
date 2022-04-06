@@ -20,7 +20,7 @@
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
                         <h6>{{ auth()->user()->name }}</h6>
-                        <span>{{ $data['navbar']['role'] }}</span>
+                        <span>{{ auth()->user()->roles->name }}</span>
                     </li>
                     <li>
                         <hr class="dropdown-divider">
