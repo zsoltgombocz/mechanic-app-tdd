@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model
+class User extends Authenticatable
 {
     protected $fillable = ['name', 'role_id'];
     public $timestamps = false;
@@ -16,7 +17,7 @@ class User extends Model
 
     public function roles()
     {
-        return $this->hasOne(Role::class);
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
     use HasFactory;
