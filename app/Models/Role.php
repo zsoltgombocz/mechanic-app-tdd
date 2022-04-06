@@ -11,7 +11,7 @@ class Role extends Model
     public $timestamps = false;
     public function role()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
     use HasFactory;
 }
