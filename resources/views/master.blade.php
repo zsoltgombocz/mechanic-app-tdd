@@ -35,111 +35,21 @@
 </head>
 
 <body>
-    <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top d-flex align-items-center">
-
-        <div class="d-flex align-items-center justify-content-between">
-            <a href="/" class="logo d-flex align-items-center">
-                <span class="d-none d-lg-block">Mechanic App</span>
-            </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
-        </div>
-
-        <nav class="header-nav ms-auto">
-            <ul class="d-flex align-items-center">
-
-                <li class="nav-item dropdown pe-3">
-
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">login_id</span>
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
-                            <h6>teljesnev</h6>
-                            <span>rang</span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="/logout">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Kilépés</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </li>
-
-            </ul>
-        </nav>
-    </header>
-
-    <!-- ======= Sidebar ======= -->
-    <aside id="sidebar" class="sidebar">
-
-        <ul class="sidebar-nav" id="sidebar-nav">
-
-            <li class="nav-item">
-                <a class="nav-link " href="index.html">
-                    <i class="bi bi-clipboard-plus"></i>
-                    <span>Munkalap létrehozás (Ha van rang)</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-clipboard"></i><span>Munkalapok</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="components-alerts.html">
-                            <i class="bi bi-circle"></i><span>Munkalap 1</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-accordion.html">
-                            <i class="bi bi-circle"></i><span>Munkalap 2</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-badges.html">
-                            <i class="bi bi-circle"></i><span>Munkalap 3</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </aside>
-
+    @include('includes.navbar')
+    @include('includes.sidebar')
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Oldal cime</h1>
+            <h1>{{ Route::current()->getName() }}</h1>
         </div>
 
         <section class="section dashboard">
-
+            @yield('content')
         </section>
 
     </main>
 
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            Az oldal témája egy ingyenesen felhasználható sablon. <br />
-            &copy; Copyrights <strong><span>NiceAdmin</span></strong>
-        </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Dizájnt készítette: <a href="https://bootstrapmade.com/">BootstrapMade</a>
-        </div>
-    </footer><!-- End Footer -->
+    @include('includes.footer')
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
