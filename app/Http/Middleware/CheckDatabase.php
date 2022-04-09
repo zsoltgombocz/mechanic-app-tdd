@@ -6,8 +6,9 @@ use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class InjectData
+class CheckDatabase
 {
     /**
      * Handle an incoming request.
@@ -18,17 +19,11 @@ class InjectData
      */
     public function handle(Request $request, Closure $next)
     {
-        $roleName = Role::where('id', Auth::user()->role_id)->get()->first()->name;
-        $data = [
-            'navbar' => [
-                'role' => $roleName
-            ]
-        ];
-        $request->merge(array("data" => $data));
-        $request['data'] = $data;
-
-        view()->share('data', $data);
-
-        return $next($request);
+        try {
+            DB::select('SELECT * FROM roles');
+            return $next($request);
+        } catch (\Throwable $th) {
+            return redirect('dbstatus');
+        }
     }
 }
