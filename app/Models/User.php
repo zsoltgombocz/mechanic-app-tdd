@@ -8,11 +8,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    protected $fillable = ['name', 'role_id'];
+    protected $fillable = ['name', 'role_id', 'login_id', 'password'];
     public $timestamps = false;
-    public function worksheet()
+
+    public function created_worksheets()
     {
-        return $this->belongsTo(Worksheet::class);
+        return $this->hasMany(Worksheet::class, 'admin_id');
+    }
+
+    public function assigned_worksheets()
+    {
+        return $this->hasMany(Worksheet::class, 'mechanic_id');
     }
 
     public function roles()
