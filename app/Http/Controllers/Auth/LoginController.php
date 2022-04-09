@@ -30,17 +30,13 @@ class LoginController extends Controller
         $creds = $request->only('login_id', 'password');
         if (Auth::attempt($creds, true)) {
             $request->session()->regenerate();
-            $rolename = Role::where('id', Auth::user()->role_id)->get()->first()->name;
 
-            session(['rolename' => $rolename]);
-            return redirect()->intended('/');
+            return redirect()->intended('/index');
         }
 
         return back()->withErrors([
             'login_id' => 'A megadott név és jelszó páros nem szerepel az adatbázisban!'
         ])->withInput($request->only('login_id'));
-
-        return dd($request);
     }
 
     /**
