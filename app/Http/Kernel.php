@@ -2,7 +2,8 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\InjectData;
+use App\Http\Middleware\CheckDatabase;
+use App\Http\Middleware\GetWorksheets;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -21,7 +22,11 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class
+    ];
+
+    protected $middlewarePriority = [
+        CheckDatabase::class,
     ];
 
     /**
@@ -64,6 +69,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'injectdata' => \App\Http\Middleware\InjectData::class
+        'checkdb' => CheckDatabase::class,
+        'getworksheets' => GetWorksheets::class
     ];
 }
