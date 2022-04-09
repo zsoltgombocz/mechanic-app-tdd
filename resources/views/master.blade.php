@@ -20,11 +20,11 @@
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="./css/style.css" rel="stylesheet">
+    <link href="{{ asset('/css/style.css') }}" rel="stylesheet">
 
     <!-- =======================================================
   * Template Name: NiceAdmin - v2.2.2
@@ -37,10 +37,13 @@
 <body>
     @include('includes.navbar')
     @include('includes.sidebar')
+
     <main id="main" class="main">
+        @include('includes.alert')
 
         <div class="pagetitle">
-            <h1>{{ Route::current()->getName() }}</h1>
+            <h1>{{ Route::current()->getName() . 'ID:' . (isset($extendRouteName) ? $extendRouteName['id'] : '') }}
+            </h1>
         </div>
 
         <section class="section dashboard">
@@ -55,10 +58,10 @@
             class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
-    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Template Main JS File -->
-    <script src="./js/main.js"></script>
+    <script src="{{ asset('/js/main.js') }}"></script>
 
 </body>
 

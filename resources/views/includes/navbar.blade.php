@@ -34,7 +34,7 @@
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Kilépés</span>
                             </a>
-                            <form action="/logout" method="POST">
+                        </form>
                     </li>
 
                 </ul>

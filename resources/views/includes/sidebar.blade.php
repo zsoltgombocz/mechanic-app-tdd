@@ -22,15 +22,16 @@
                     <span>Szerelők kezelése</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
-                <ul id="mechanics-nav" class="nav-content collapse {{ Request::path() == 'mechanics' ? 'show' : '' }}"
+                <ul id="mechanics-nav"
+                    class="nav-content collapse {{ Request::segment('1') == 'mechanics' ? 'show' : '' }}"
                     data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="/mechanics" class="{{ Request::path() == 'mechanics' ? 'active' : '' }}">
+                        <a href="/mechanics" class="{{ Request::segment('1') == 'mechanics' ? 'active' : '' }}">
                             <i class="bi bi-circle"></i><span>Szerelők listázása</span>
                         </a>
                     </li>
                     <li>
-                        <a href="components-accordion.html">
+                        <a href="/mechanics/create">
                             <i class="bi bi-circle"></i><span>Szerelők hozzáadása</span>
                         </a>
                     </li>
@@ -43,21 +44,26 @@
                 <i class="bi bi-clipboard"></i><span>Munkalapok</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="workseehts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="components-alerts.html">
-                        <i class="bi bi-circle"></i><span>Munkalap 1</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="components-accordion.html">
-                        <i class="bi bi-circle"></i><span>Munkalap 2</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="components-badges.html">
-                        <i class="bi bi-circle"></i><span>Munkalap 3</span>
-                    </a>
-                </li>
+                @foreach (session()->get('assigned_worksheets') as $ws)
+                    <li>
+                        <a href="/worksheets/{{ $ws->id }}">
+                            <i
+                                class="bi bi-circle"></i><span>{{ isset($ws->customer_name) ? $ws->customer_name . ' - ' . ws->id : 'Munkalap - ' . $ws->id }}</span>
+                        </a>
+                    </li>
+                @endforeach
+                @if (auth()->user()->role_id == 1)
+                    <hr class="dropdown-divider">
+                    <li class="nav-heading">Általad létrehozott:</li>
+                    @foreach (session()->get('created_worksheets') as $ws)
+                        <li>
+                            <a href="/worksheets/{{ $ws->id }}">
+                                <i
+                                    class="bi bi-circle"></i><span>{{ isset($ws->customer_name) ? $ws->customer_name . ' - ' . ws->id : 'Munkalap - ' . $ws->id }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                @endif
             </ul>
         </li>
     </ul>
