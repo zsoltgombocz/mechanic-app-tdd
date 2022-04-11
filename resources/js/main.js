@@ -218,3 +218,92 @@
   }
 
 })();
+
+const processHolder = document.getElementById('processHolder');
+const addProcessBtn = document.getElementById('addProcess');
+let NoP = 0;
+
+const getMaintenances = async () => {
+    console.log('getting');
+    let gotData = null;
+    $.ajax({
+        type:'GET',
+        url:'/ajax/maintenances',
+        success:function(data) {
+            gotData = data;
+        }
+     });
+     return gotData;
+}
+let _MAINTENANCES = null;
+window.addEventListener('load', async () => {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+        },
+        async: false
+    });
+    _MAINTENANCES = await getMaintenances();
+
+});
+
+
+const generateMaintenanceSelect = (object) => {
+    let html = "<div class='col-4'><select name='process["+NoP+"][maintenance]' class='form-select' id='maintenance_id'>";
+    object.forEach((m, i) => {
+        html += `<option ${(i === 0) ? 'selected' : '' } value=${m.id}>${m.name}</option>`;
+    });
+    html += "</select></div>";
+    return html;
+}
+const generateTimeSpanInput = () => {
+    return (
+        "<div class='col-2'>"
+            +"<input type='text' name='process["+NoP+"][time_span]' class='form-control' id='time_span' placeholder='Idő' required/>"
+        +"</div>"
+    );
+}
+const generatePriceInput = () => {
+    return (
+        "<div class='col-2'>"
+            +"<input type='text' name='process["+NoP+"][price]' class='form-control' id='price' placeholder='Ár' required/>"
+        +"</div>"
+    );
+}
+//PROCESS VALIDATION ERROR NEM JELENIK MEG
+const genenerateHTML = (type) => {
+    switch(type){
+        case 1:
+            return (
+                generateMaintenanceSelect(_MAINTENANCES) +""+
+                generateTimeSpanInput() +""+
+                generatePriceInput()
+            );
+    }
+}
+const createProcess = () => {
+    NoP++;
+    let HTML =
+        "<div class='col-4'>"
+            +"<select name='process["+NoP+"][process]' class='form-select' id='process_id'>"
+                        +"<option selected value='1'>Általános</option>"
+                        +"<option value='2'>Anyag</option>"
+                        +"<option value='3'>Alkatrész</option>"
+                        +"<option value='4'>Egyéni</option>"
+                +"</select>"
+        +"</div>"
+    ;
+
+    HTML += genenerateHTML(1);
+    HTML +=  "<div class='invalid-feedback'>A mezők kitöltése kötelező!</div>";
+    const inputs = document.createElement("div");
+    inputs.className = "row mb-2 has-validation input-group";
+    inputs.setAttribute('id', "process-" + NoP);
+    inputs.innerHTML = HTML;
+    processHolder.append(inputs);
+
+}
+addProcessBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    createProcess();
+});
