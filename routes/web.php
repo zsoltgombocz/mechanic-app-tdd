@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DatabaseRouteController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\MechanicController;
+use App\Http\Controllers\WorksheetController;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\DataCollector\AjaxDataCollector;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +29,18 @@ Route::middleware(['checkdb', 'auth', 'getworksheets'])->group(function () {
     Route::post('/mechanics/update/{id}', [MechanicController::class, 'update']);
     Route::post('/mechanics/delete/{id}', [MechanicController::class, 'destroy']);
     Route::post('/logout', [LoginController::class, 'destroy']);
+
+    Route::get('/worksheets', [WorksheetController::class, 'index'])->name('Munkalapok');
+    Route::post('/worksheets/search', [WorksheetController::class, 'search']);
+
+    Route::get('/worksheets/create', [WorksheetController::class, 'create'])->name('Munkalap létrehozása');
+    Route::post('/worksheets/create', [WorksheetController::class, 'store']);
+
+    Route::get('/worksheets/{id}', [WorksheetController::class, 'edit'])->name('Munkalap szerkesztése - ');
+    Route::post('/worksheets/update/{id}', [WorksheetController::class, 'update']);
+
+
+    Route::get('/ajax/maintenances', [AjaxController::class, 'maintenances']);
 });
 
 Route::middleware(['checkdb', 'guest'])->group(function () {
