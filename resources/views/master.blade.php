@@ -42,7 +42,7 @@
         @include('includes.alert')
 
         <div class="pagetitle">
-            <h1>{{ Route::current()->getName() . 'ID:' . (isset($extendRouteName) ? $extendRouteName['id'] : '') }}
+            <h1>{{ Route::current()->getName() . (isset($extendRouteName) ? 'ID: ' . $extendRouteName['id'] : '') }}
             </h1>
         </div>
 
@@ -59,9 +59,10 @@
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- Template Main JS File -->
     <script src="{{ asset('/js/main.js') }}"></script>
+
 
 </body>
 
