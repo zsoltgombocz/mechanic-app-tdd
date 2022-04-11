@@ -31,7 +31,7 @@ class LoginController extends Controller
         if (Auth::attempt($creds, true)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/index');
+            return redirect()->intended('/');
         }
 
         return back()->withErrors([
