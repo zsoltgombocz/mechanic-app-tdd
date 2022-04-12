@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LabourProcess;
 use App\Models\User;
 use App\Models\Worksheet;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -104,6 +106,14 @@ class WorksheetController extends Controller
     {
         //
     }
+    function compare_func($a, $b)
+    {
+        // CONVERT $a AND $b to DATE AND TIME using strtotime() function
+        $t1 = new DateTime($a["created_at"]);
+        $t2 = new DateTime($b["created_at"]);
+        if ($t1 === $t2) return 0;
+        return ($t1 < $t2) ? -1 : 1;
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -116,8 +126,11 @@ class WorksheetController extends Controller
         $worksheet = Worksheet::where('id', $id)->get()->first();
         $mechanics = User::all();
         $worksheet['created_at_html'] = str_replace(' ', 'T', $worksheet['created_at']);
-
+        $lp = $worksheet->labour_process->toArray();
+        shuffle($lp);
+        usort($lp, array($this, 'compare_func'));
         return view('pages.worksheets_edit', [
+            'labour_processes' => $lp,
             'mechanics' => $mechanics,
             'worksheet' => $worksheet,
             'extendRouteName' => [
@@ -125,7 +138,6 @@ class WorksheetController extends Controller
             ]
         ]);
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -141,6 +153,14 @@ class WorksheetController extends Controller
                 dd($request);
             } else {
                 if ($request->process !== null) {
+                    foreach ($request->process as $proc) {
+                        $this->saveProcess($id, $proc);
+                    }
+
+                    return redirect("worksheets/" . $id)->with(['alert' => [
+                        'type' => 'success',
+                        'message' => 'Munkalap mentve!'
+                    ]]);
                 } else {
                     return redirect("worksheets/" . $id)->with(['alert' => [
                         'type' => 'success',
@@ -149,6 +169,18 @@ class WorksheetController extends Controller
                 }
             }
         } else return redirect('/');
+    }
+
+    public function saveProcess($id, $processArray)
+    {
+        switch ($processArray['process']) {
+            case 1:
+                LabourProcess::create([
+                    'worksheet_id' => $id,
+                    'time_span' => $processArray['time_span'],
+                    'maintenance_id' => $processArray['maintenance']
+                ]);
+        }
     }
 
     /**
