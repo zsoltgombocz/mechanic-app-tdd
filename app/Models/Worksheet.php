@@ -18,5 +18,10 @@ class Worksheet extends Model
     {
         return $this->hasOne(User::class, 'id', 'mechanic_id');
     }
+
+    public function labour_process()
+    {
+        return $this->hasMany(LabourProcess::class);
+    }
     use HasFactory;
 }
