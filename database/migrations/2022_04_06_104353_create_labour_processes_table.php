@@ -17,7 +17,7 @@ class CreateLabourProcessesTable extends Migration
             $table->id();
             $table->string('name')->nullable()->default(NULL);
             $table->text('info')->nullable()->default(NULL);
-            $table->unsignedBigInteger('maintenance_id');
+            $table->unsignedBigInteger('maintenance_id')->nullable()->default(NULL);
             $table->unsignedBigInteger('worksheet_id');
             $table->integer('time_span');
             $table->timestamps();
