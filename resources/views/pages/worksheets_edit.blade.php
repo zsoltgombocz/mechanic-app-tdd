@@ -104,6 +104,9 @@
                             </div>
                         </div>
                         <hr />
+                        Felvett munkafolyamatok:
+                        {{ dd($labour_processes) }}
+                        <hr />
                         <div class="col-12">
                             <button class="btn btn-primary w-100" id="addProcess">Munkafolyamat felvétele</button>
                         </div>
