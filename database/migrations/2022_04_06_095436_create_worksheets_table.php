@@ -25,7 +25,7 @@ class CreateWorksheetsTable extends Migration
             $table->unsignedBigInteger('mechanic_id')->nullable()->default(NULL);
             $table->tinyInteger('closed')->default('0');
             $table->dateTime('closed_at')->nullable()->default(NULL);
-            $table->tinyInteger('payment')->nullable()->default(NULL);
+            $table->tinyInteger('payment')->default(-1);
 
             $table->foreign('admin_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('mechanic_id')->references('id')->on('users')->onDelete('set null');
