@@ -18,7 +18,7 @@ class GetWorksheets
      */
     public function handle(Request $request, Closure $next)
     {
-        $assigned_worksheets = Auth::user()->assigned_worksheets;
+        $assigned_worksheets = isset(Auth::user()->assigned_worksheets) ? Auth::user()->assigned_worksheets : [];
         $created_worksheets = Auth::user()->created_worksheets;
         $request->session()->flash('assigned_worksheets', $assigned_worksheets);
         $request->session()->flash('created_worksheets', $created_worksheets);
