@@ -297,7 +297,7 @@ const createProcess = () => {
     HTML += genenerateHTML(1);
     HTML +=  "<div class='invalid-feedback'>A mezők kitöltése kötelező!</div>";
     const inputs = document.createElement("div");
-    inputs.className = "row mb-2 has-validation input-group";
+    inputs.className = "row m-0 mb-2 has-validation input-group";
     inputs.setAttribute('id', "process-" + NoP);
     inputs.innerHTML = HTML;
     processHolder.append(inputs);
