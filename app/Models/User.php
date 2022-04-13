@@ -18,7 +18,7 @@ class User extends Authenticatable
 
     public function assigned_worksheets()
     {
-        return $this->hasMany(Worksheet::class, 'mechanic_id');
+        return $this->hasMany(Worksheet::class, 'mechanic_id')->where('closed', '=', 0);
     }
 
     public function roles()
