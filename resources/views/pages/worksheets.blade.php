@@ -12,6 +12,16 @@
                         onclick="event.preventDefault(); document.getElementById('searchWorksheets').submit()"><i
                             class="bi bi-search"></i></button>
                 </div>
+                <div class="col-6 d-flex mt-2 align-items-center">
+                    <span>Dátum:</span>
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected>Open this select menu</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+
+                </div>
             </form>
         </div>
         @if (auth()->user()->role_id === 1)
@@ -36,6 +46,14 @@
                             </h4>
                             <span class="">{{ $ws->created_at }}</span>
                         </div>
+                        <p><b>Lakcím:</b>
+                            @if (isset($ws->customer_addr))
+                                {{ $ws->customer_addr }}
+                            @else
+                                {!! "<span class='text-danger'>Nincs megadva!</span>" !!}
+                            @endif
+                        </p>
+                        <hr />
                         <p><b>Létrehozta:</b> {{ $ws->creator->name }} (LoginID: {{ $ws->creator->login_id }})
                         </p>
                         <p><b>Szerelő:</b>
@@ -50,21 +68,21 @@
                             <div class="row">
                                 <p><b>Rendszám:</b>
                                     @if (isset($ws->vehicle_license))
-                                        {{ $ws->mechanic->vehicle_license }}
+                                        {{ $ws->vehicle_license }}
                                     @else
                                         {!! "<span class='text-danger'>Nincs megadva!</span>" !!}
                                     @endif
                                 </p>
                                 <p><b>Gyártmány:</b>
                                     @if (isset($ws->vehicle_brand))
-                                        {{ $ws->mechanic->vehicle_brand }}
+                                        {{ $ws->vehicle_brand }}
                                     @else
                                         {!! "<span class='text-danger'>Nincs megadva!</span>" !!}
                                     @endif
                                 </p>
                                 <p><b>Típus:</b>
                                     @if (isset($ws->vehicle_model))
-                                        {{ $ws->mechanic->vehicle_model }}
+                                        {{ $ws->vehicle_model }}
                                     @else
                                         {!! "<span class='text-danger'>Nincs megadva!</span>" !!}
                                     @endif
@@ -72,7 +90,16 @@
                             </div>
                         @endif
                     </div>
-                    <div class="card-footer d-flex justify-content-end">
+                    <div class="card-footer d-flex justify-content-between">
+                        <div classs="d-flex">
+                            Szerkesztve: {{ $ws->updated_at }} <br />
+                            Zárolva:
+                            @if (isset($ws->closed_at))
+                                {{ $ws->closed_at }}
+                            @else
+                                {!! "<span class='text-danger'>-</span>" !!}
+                            @endif
+                        </div>
                         <a class="nav-link" href="worksheets/{{ $ws->id }}">
                             Megnyitás <i class="bi bi-arrow-right"></i>
                         </a>

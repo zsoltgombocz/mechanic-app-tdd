@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="row justify-content-center">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-8">
             <div class="card mb-3">
 
                 <div class="card-body">
@@ -37,7 +37,8 @@
                             <label for="mechanic_id" class="form-label">Szerelő:</label>
                             <div class="col-12">
                                 @if (auth()->user()->role_id === 1)
-                                    <select name="mechanic_id" class="form-select" id="mechanic_id">
+                                    <select name="mechanic_id" class="form-select" id="mechanic_id"
+                                        {{ $worksheet->closed === 0 ? '' : 'disabled' }}>
                                         <option {{ $worksheet->mechanic === null ? 'selected' : '' }} value="-1">
                                         </option>
                                         @foreach ($mechanics as $m)
@@ -68,7 +69,7 @@
                             <div class="input-group">
                                 <input type="text" name="customer_name" class="form-control" id="customer_name"
                                     value="{{ $worksheet->customer_name }}"
-                                    {{ auth()->user()->role_id === 1 ? '' : 'disabled' }}>
+                                    {{ auth()->user()->role_id === 1 && $worksheet->closed === 0 ? '' : 'disabled' }}>
                             </div>
                         </div>
                         <div class="col-12 col-md-8 mb-3">
@@ -76,7 +77,7 @@
                             <div class="input-group">
                                 <input type="text" name="customer_addr" class="form-control" id="customer_addr"
                                     value="{{ $worksheet->customer_addr }}"
-                                    {{ auth()->user()->role_id === 1 ? '' : 'disabled' }}>
+                                    {{ auth()->user()->role_id === 1 && $worksheet->closed === 0 ? '' : 'disabled' }}>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 mb-3">
@@ -84,7 +85,7 @@
                             <div class="input-group">
                                 <input type="text" name="vehicle_brand" class="form-control" id="vehicle_brand"
                                     value="{{ $worksheet->vehicle_brand }}"
-                                    {{ auth()->user()->role_id === 1 ? '' : 'disabled' }}>
+                                    {{ auth()->user()->role_id === 1 && $worksheet->closed === 0 ? '' : 'disabled' }}>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 mb-3">
@@ -92,7 +93,7 @@
                             <div class="input-group">
                                 <input type="text" name="vehicle_model" class="form-control" id="vehicle_model"
                                     value="{{ $worksheet->vehicle_model }}"
-                                    {{ auth()->user()->role_id === 1 ? '' : 'disabled' }}>
+                                    {{ auth()->user()->role_id === 1 && $worksheet->closed === 0 ? '' : 'disabled' }}>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 mb-3">
@@ -100,17 +101,45 @@
                             <div class="input-group">
                                 <input type="text" name="vehicle_license" class="form-control" id="vehicle_license"
                                     value="{{ $worksheet->vehicle_license }}"
-                                    {{ auth()->user()->role_id === 1 ? '' : 'disabled' }}>
+                                    {{ auth()->user()->role_id === 1 && $worksheet->closed === 0 ? '' : 'disabled' }}>
                             </div>
                         </div>
                         <hr />
-                        Felvett munkafolyamatok:
-                        {{ dd($labour_processes) }}
-                        <hr />
+                        <div class="col-12">Felvett munkafolyamatok:</div>
+                        @if (count($labour_processes) !== 0)
+                            <div class="col-12 d-flex align-items-start justify-content-end text-danger fw-700">Összesen: xy
+                                ft</div>
+                        @else
+                            <div class="col-12 d-flex text-danger justify-content-center">
+                                Nincs megjelenthető munkafolyamat!
+                            </div>
+                        @endif
+
                         <div class="col-12">
                             <button class="btn btn-primary w-100" id="addProcess">Munkafolyamat felvétele</button>
                         </div>
                         <div id="processHolder"></div>
+                        @if (auth()->user()->role_id === 1)
+                            <hr />
+                            <div class="col-6">
+                                <div class="form-check form-switch mb-3">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Munkalap zárolása</label>
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                        name="closed" {{ $worksheet['closed'] === 1 ? 'checked' : '' }}>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <select name="payment" class="form-select mb-3" id="payment">
+                                    <option {{ !isset($worksheet['payment']) ? 'selected' : '' }} value="-1">Még nincs
+                                        fizetve</option>
+                                    <option {{ $worksheet['payment'] === 0 ? 'selected' : '' }} value="0">Kézpénz
+                                    </option>
+                                    <option {{ $worksheet['payment'] === 1 ? 'selected' : '' }} value="1">Bankkártya
+                                    </option>
+                                </select>
+                            </div>
+                            <hr />
+                        @endif
                         <div class="col-12">
                             <button class="btn btn-success w-100" type="submit">Mentés</button>
                         </div>
