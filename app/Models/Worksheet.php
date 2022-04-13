@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Worksheet extends Model
 {
-    protected $fillable = ['admin_id'];
+    protected $fillable = ['mechanic_id', 'admin_id', 'customer_name', 'customer_addr', 'vehicle_license', 'vehicle_brand', 'vehicle_model', 'closed', 'payment', 'closed_at'];
 
     public function creator()
     {
