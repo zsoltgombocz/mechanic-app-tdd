@@ -5,12 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\LabourProcess;
 use App\Models\User;
 use App\Models\Worksheet;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class WorksheetController extends Controller
 {
+    function asc($a, $b)
+    {
+        // CONVERT $a AND $b to DATE AND TIME using strtotime() function
+        $t1 = new DateTime($a["created_at"]);
+        $t2 = new DateTime($b["created_at"]);
+        if ($t1 === $t2) return 0;
+        return ($t1 < $t2) ? -1 : 1;
+    }
+    function desc($a, $b)
+    {
+        // CONVERT $a AND $b to DATE AND TIME using strtotime() function
+        $t1 = new DateTime($a["created_at"]);
+        $t2 = new DateTime($b["created_at"]);
+        if ($t1 === $t2) return 0;
+        return ($t1 > $t2) ? -1 : 1;
+    }
+
     public function getWorksheets($search, $query)
     {
         $worksheets = NULL;
@@ -37,7 +55,29 @@ class WorksheetController extends Controller
         if (Auth::check()) {
             $q = Worksheet::query();
             if (Auth::user()->role_id === 1) {
-                $worksheets = $this->getWorksheets($request->query('search'), $q);
+                $date = $request->query('date');
+                $closed = $request->query('closed');
+                if (isset($closed)) {
+                    if ($closed === 'true') {
+                        $q = $q->having('closed', '=', 1);
+                    } else {
+                        $q = $q->having('closed', '=', 0);
+                    }
+                }
+                $worksheets = $this->getWorksheets($request->query('search'), $q)->toArray();
+                if (isset($date)) {
+                    switch ($date) {
+                        case 'asc':
+                            usort($worksheets, array($this, 'asc'));
+                            break;
+                        case 'desc':
+                            usort($worksheets, array($this, 'desc'));
+                            break;
+                    }
+                } else usort($worksheets, array($this, 'asc'));
+                collect($worksheets);
+                //TO ARRAY UTAN JO LENNE COLLECTIONKENT VISSZA ADNI
+                //OKET HOGY NE KELLJEN MAR ATIRNI MINDENT HE
             } else {
                 $q = $q->having('mechanic_id', '=', Auth::user()->id);
                 $worksheets = $this->getWorksheets($request->query('search'), $q);
@@ -106,14 +146,6 @@ class WorksheetController extends Controller
     {
         //
     }
-    function compare_func($a, $b)
-    {
-        // CONVERT $a AND $b to DATE AND TIME using strtotime() function
-        $t1 = new DateTime($a["created_at"]);
-        $t2 = new DateTime($b["created_at"]);
-        if ($t1 === $t2) return 0;
-        return ($t1 < $t2) ? -1 : 1;
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -128,7 +160,7 @@ class WorksheetController extends Controller
         $worksheet['created_at_html'] = str_replace(' ', 'T', $worksheet['created_at']);
         $lp = $worksheet->labour_process->toArray();
         shuffle($lp);
-        usort($lp, array($this, 'compare_func'));
+        usort($lp, array($this, 'desc'));
         return view('pages.worksheets_edit', [
             'labour_processes' => $lp,
             'mechanics' => $mechanics,
@@ -150,7 +182,32 @@ class WorksheetController extends Controller
         if (Auth::check()) {
 
             if (Auth::user()->role_id === 1) {
-                dd($request);
+                $ws = Worksheet::find($id);
+                $curr_closed = $request->closed === 'on' ? 1 : 0;
+                if ($curr_closed === 0 && $ws->closed === 1) {
+                    $ws->update([
+                        'closed' =>  $curr_closed,
+                        'closed_at' => NULL,
+                    ]);
+                } else if ($curr_closed === 1 && $ws->closed === 0 || $curr_closed === 0 && $ws->closed === 0) {
+                    Worksheet::find($id)->update([
+                        'customer_name' => isset($request->customer_name) ? $request->customer_name : NULL,
+                        'customer_addr' => isset($request->customer_addr) ? $request->customer_addr : NULL,
+                        'vehicle_license' => isset($request->vehicle_license) ? $request->vehicle_license : NULL,
+                        'vehicle_brand' => isset($request->vehicle_brand) ? $request->vehicle_brand : NULL,
+                        'vehicle_model' => isset($request->vehicle_model) ? $request->vehicle_model : NULL,
+                        'mechanic_id' => isset($request->mechanic_id) && $request->mechanic_id != -1 ? $request->mechanic_id : NULL,
+                        'closed' => $request->closed === 'on' ? 1 : 0,
+                        'closed_at' => $request->closed === 'on' ? Carbon::now() : NULL,
+                        'payment' => $request->payment,
+                        'updated_at' => Carbon::now()
+                    ]);
+                }
+
+                return redirect("worksheets/" . $id)->with(['alert' => [
+                    'type' => 'success',
+                    'message' => 'Munkalap mentve!'
+                ]]);
             } else {
                 if ($request->process !== null) {
                     foreach ($request->process as $proc) {
