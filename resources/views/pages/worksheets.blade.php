@@ -3,26 +3,30 @@
 @section('content')
     <div class="row">
         <div class="col-6 mb-4">
-            <form action="worksheets/search" method="POST" id="searchWorksheets">
-                @csrf
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" id="search" placeholder="Munkalap keresése"
-                        value="{{ isset($search) ? $search : '' }}">
-                    <button class="btn btn-primary"
-                        onclick="event.preventDefault(); document.getElementById('searchWorksheets').submit()"><i
-                            class="bi bi-search"></i></button>
-                </div>
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" id="search" placeholder="Munkalap keresése"
+                    value="{{ isset($search) ? $search : '' }}">
+                <button class="btn btn-primary" id="filter_search_btn"><i class="bi bi-search"></i></button>
+            </div>
+            <div class="row">
                 <div class="col-6 d-flex mt-2 align-items-center">
-                    <span>Dátum:</span>
-                    <select class="form-select" aria-label="Default select example">
-                        <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                    <span class="me-2">Dátum:</span>
+                    <select id="filter_date" class="form-select" aria-label="Default select example">
+                        <option value="0" {{ $order == 'desc' ? 'selected' : '' }}>Csökkenő</option>
+                        <option value="1" {{ $order == 'asc' ? 'selected' : '' }}>Növekvő</option>
                     </select>
 
                 </div>
-            </form>
+                <div class="col-6 d-flex mt-2 align-items-center">
+                    <span class="me-2">Mutasd:</span>
+                    <select id="filter_closed" class="form-select" aria-label="Default select example">
+                        <option value="0" {{ !isset($closed) ? 'selected' : '' }}>Mind</option>
+                        <option value="1" {{ $closed === 'false' ? 'selected' : '' }}>Nem zárolt</option>
+                        <option value="2" {{ $closed === 'true' ? 'selected' : '' }}>Zárolt</option>
+
+                    </select>
+                </div>
+            </div>
         </div>
         @if (auth()->user()->role_id === 1)
             <div class="col-6 mb-4">
