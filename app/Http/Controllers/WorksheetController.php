@@ -57,6 +57,7 @@ class WorksheetController extends Controller
             if (Auth::user()->role_id === 1) {
                 $date = $request->query('date');
                 $closed = $request->query('closed');
+                $order = isset($date) ? $request->query('date') : 'desc';
                 if (isset($closed)) {
                     if ($closed === 'true') {
                         $q = $q->having('closed', '=', 1);
@@ -64,35 +65,15 @@ class WorksheetController extends Controller
                         $q = $q->having('closed', '=', 0);
                     }
                 }
-                $worksheets = $this->getWorksheets($request->query('search'), $q)->toArray();
-                if (isset($date)) {
-                    switch ($date) {
-                        case 'asc':
-                            usort($worksheets, array($this, 'asc'));
-                            break;
-                        case 'desc':
-                            usort($worksheets, array($this, 'desc'));
-                            break;
-                    }
-                } else usort($worksheets, array($this, 'asc'));
-                collect($worksheets);
-                //TO ARRAY UTAN JO LENNE COLLECTIONKENT VISSZA ADNI
-                //OKET HOGY NE KELLJEN MAR ATIRNI MINDENT HE
+                $q = $q->orderBy('created_at', $order);
+                $worksheets = $this->getWorksheets($request->query('search'), $q);
             } else {
                 $q = $q->having('mechanic_id', '=', Auth::user()->id);
                 $worksheets = $this->getWorksheets($request->query('search'), $q);
             }
-            return view('pages.worksheets', ['search' => $request->query('search'), 'worksheets' => $worksheets]);
+            return view('pages.worksheets', ['closed' => $closed, 'order' => $order, 'search' => $request->query('search'), 'worksheets' => $worksheets]);
         } else return redirect('/');
     }
-
-    public function search(Request $request)
-    {
-        if (Auth::check()) {
-            return redirect("/worksheets?search={$request->search}");
-        } else return redirect('/');
-    }
-
     /**
      * Show the form for creating a new resource.
      *
