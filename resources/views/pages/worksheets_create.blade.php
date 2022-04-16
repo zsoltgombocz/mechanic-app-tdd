@@ -21,7 +21,7 @@
                         <div class="col-6 mb-3">
                             <label for="loginid" class="form-label">Belépési azonosító</label>
                             <div class="input-group">
-                                <input type="text" name="login_id" class="form-control" id="loginid" disabled
+                                <input type="text" name="login_id" class="form-control" id="loginid" readonly
                                     value={{ auth()->user()->login_id }}>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                         <div class="col-6 mb-3">
                             <label for="mechanicname" class="form-label">Létrehozó neve</label>
                             <div class="input-group">
-                                <input type="text" name="name" class="form-control" id="creatorname" disabled
+                                <input type="text" name="name" class="form-control" id="creatorname" readonly
                                     value="{{ auth()->user()->name }}">
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                             <label for="created_at" class="form-label">Létrehozás időpontja:</label>
                             <div class="input-group">
                                 <input type="datetime-local" name="created_at" class="form-control" id="created_at"
-                                    value={{ $datetime }} disabled>
+                                    value={{ $datetime }} readonly>
                             </div>
                         </div>
 

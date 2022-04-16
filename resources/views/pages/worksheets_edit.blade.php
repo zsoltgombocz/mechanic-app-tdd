@@ -107,6 +107,9 @@
                         <hr />
                         <div class="col-12">Felvett munkafolyamatok:</div>
                         @if (count($labour_processes) !== 0)
+                            @foreach ($labour_processes as $labour)
+                                <p>{{ $labour['name'] }}</p>
+                            @endforeach
                             <div class="col-12 d-flex align-items-start justify-content-end text-danger fw-700">Összesen: xy
                                 ft</div>
                         @else
@@ -118,7 +121,7 @@
                         <div class="col-12">
                             <button class="btn btn-primary w-100" id="addProcess">Munkafolyamat felvétele</button>
                         </div>
-                        <div id="processHolder"></div>
+                        <ul id="processHolder" class="list-group list-group"></ul>
                         @if (auth()->user()->role_id === 1)
                             <hr />
                             <div class="col-6">
