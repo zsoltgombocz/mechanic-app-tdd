@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarPartProcess;
 use App\Models\LabourProcess;
+use App\Models\Maintenance;
+use App\Models\MaterialProcess;
 use App\Models\User;
 use App\Models\Worksheet;
 use Carbon\Carbon;
@@ -82,8 +85,7 @@ class WorksheetController extends Controller
     public function create()
     {
         if (Auth::check() && Auth::user()->role_id === 1) {
-            $datetime = \Carbon\Carbon::now()->toDateTimeString();
-            $datetime = str_replace(' ', 'T', $datetime);
+            $datetime = Carbon::now()->toDateTimeLocalString();
             $mechanics = User::all();
             return view('pages.worksheets_create', ['mechanics' => $mechanics, 'datetime' => $datetime]);
         } else return redirect('/');
@@ -100,7 +102,6 @@ class WorksheetController extends Controller
         if (Auth::check() && Auth::user()->role_id === 1) {
             $ws = Worksheet::create([
                 'admin_id' => Auth::user()->id,
-                'created_at' => $request->created_at,
                 'updated_at' => NULL,
                 'customer_name' => isset($request->customer_name) ? $request->customer_name : NULL,
                 'customer_addr' => isset($request->customer_addr) ? $request->customer_addr : NULL,
@@ -109,6 +110,8 @@ class WorksheetController extends Controller
                 'vehicle_model' => isset($request->vehicle_model) ? $request->vehicle_model : NULL,
                 'customer_addr' => isset($request->customer_addr) ? $request->customer_addr : NULL,
             ]);
+
+
 
             return redirect()->intended('worksheets')->with(['alert' => [
                 'type' => 'success',
@@ -127,7 +130,18 @@ class WorksheetController extends Controller
     {
         //
     }
-
+    public function addAdditionalData($array)
+    {
+        $result = [];
+        foreach ($array as $labour) {
+            if ($labour['maintenance_id'] != null) {
+                $coll = Maintenance::find($labour['maintenance_id']);
+                $labour = array_merge($labour, ['name' => $coll->name]);
+            }
+            array_push($result, $labour);
+        }
+        return $result;
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -137,13 +151,21 @@ class WorksheetController extends Controller
     public function edit($id)
     {
         $worksheet = Worksheet::where('id', $id)->get()->first();
+        if ($worksheet === null) {
+            return redirect('/worksheets')->with(['alert' => ['type' => 'danger', 'message' => 'Nem létezik ez a munkalap!']]);
+        }
         $mechanics = User::all();
-        $worksheet['created_at_html'] = str_replace(' ', 'T', $worksheet['created_at']);
+        $worksheet['created_at_html'] = Carbon::createFromTimeString($worksheet['created_at'])->toDateTimeLocalString();
+
         $lp = $worksheet->labour_process->toArray();
+        $lp = $this->addAdditionalData($lp);
+        $ucp = $worksheet->used_car_parts->toArray();
+        $um = $worksheet->used_materials->toArray();
+        $labors = array_merge($lp, $ucp, $um);
         shuffle($lp);
-        usort($lp, array($this, 'desc'));
+        usort($lp, array($this, 'asc'));
         return view('pages.worksheets_edit', [
-            'labour_processes' => $lp,
+            'labour_processes' => $labors,
             'mechanics' => $mechanics,
             'worksheet' => $worksheet,
             'extendRouteName' => [
@@ -179,10 +201,13 @@ class WorksheetController extends Controller
                         'vehicle_model' => isset($request->vehicle_model) ? $request->vehicle_model : NULL,
                         'mechanic_id' => isset($request->mechanic_id) && $request->mechanic_id != -1 ? $request->mechanic_id : NULL,
                         'closed' => $request->closed === 'on' ? 1 : 0,
-                        'closed_at' => $request->closed === 'on' ? Carbon::now() : NULL,
+                        'closed_at' => $request->closed === 'on' ? Carbon::now('2') : NULL,
                         'payment' => $request->payment,
-                        'updated_at' => Carbon::now()
+                        'updated_at' => Carbon::now('2')
                     ]);
+                    if ($request->process !== null) {
+                        $this->saveProcess($id, $request->process);
+                    }
                 }
 
                 return redirect("worksheets/" . $id)->with(['alert' => [
@@ -191,9 +216,9 @@ class WorksheetController extends Controller
                 ]]);
             } else {
                 if ($request->process !== null) {
-                    foreach ($request->process as $proc) {
-                        $this->saveProcess($id, $proc);
-                    }
+
+                    $this->saveProcess($id, $request->process);
+
 
                     return redirect("worksheets/" . $id)->with(['alert' => [
                         'type' => 'success',
@@ -211,13 +236,44 @@ class WorksheetController extends Controller
 
     public function saveProcess($id, $processArray)
     {
-        switch ($processArray['process']) {
-            case 1:
-                LabourProcess::create([
-                    'worksheet_id' => $id,
-                    'time_span' => $processArray['time_span'],
-                    'maintenance_id' => $processArray['maintenance']
-                ]);
+        foreach ($processArray as $process) {
+            switch ($process['process']) {
+                case 1:
+                    LabourProcess::create([
+                        'worksheet_id' => $id,
+                        'time_span' => $process['time_span'],
+                        'maintenance_id' => $process['maintenance'],
+                        'price' => $process['price']
+                    ]);
+                    break;
+                case 2:
+                    MaterialProcess::create([
+                        'worksheet_id' => $id,
+                        'name' => $process['name'],
+                        'amount' => $process['amount'],
+                        'price' => $process['price']
+                    ]);
+                    break;
+                case 3:
+                    CarPartProcess::create([
+                        'worksheet_id' => $id,
+                        'name' => $process['name'],
+                        'serial' => $process['serial'],
+                        'amount' => $process['amount'],
+                        'price' => $process['price']
+                    ]);
+                    break;
+                case 4:
+                    LabourProcess::create([
+                        'worksheet_id' => $id,
+                        'name' => $process['name'],
+                        'info' => $process['info'],
+                        'maintenance_id' => NULL,
+                        'time_span' => $process['time_span'],
+                        'price' => $process['price']
+                    ]);
+                    break;
+            }
         }
     }
 
