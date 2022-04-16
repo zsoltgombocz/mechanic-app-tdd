@@ -1,3 +1,5 @@
+const { create } = require("lodash");
+
 /**
 * Template Name: NiceAdmin - v2.2.2
 * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -247,44 +249,95 @@ if(addProcessBtn !== null) {
     });
 
 
-    const generateMaintenanceSelect = (object) => {
-        let html = "<div class='col-4'><select name='process["+NoP+"][maintenance]' class='form-select' id='maintenance_id'>";
+    const generateMaintenanceSelect = (object, nop) => {
+        let html = "<div class='col-12 col-md-4 mb-2'><select name='process["+nop+"][maintenance]' class='form-select' id='maintenance_id'>";
         object.forEach((m, i) => {
             html += `<option ${(i === 0) ? 'selected' : '' } value=${m.id}>${m.name}</option>`;
         });
         html += "</select></div>";
         return html;
     }
-    const generateTimeSpanInput = () => {
-        return (
-            "<div class='col-2'>"
-                +"<input type='text' name='process["+NoP+"][time_span]' class='form-control' id='time_span' placeholder='Idő' required/>"
-            +"</div>"
-        );
-    }
-    const generatePriceInput = () => {
-        return (
-            "<div class='col-2'>"
-                +"<input type='text' name='process["+NoP+"][price]' class='form-control' id='price' placeholder='Ár' required/>"
-            +"</div>"
-        );
-    }
-    //PROCESS VALIDATION ERROR NEM JELENIK MEG nem bajaz
-    const genenerateHTML = (type) => {
-        switch(type){
-            case 1:
+    const generateTextInput = (inputname, placeholder, cols, nop, type, required=true) => {
+        const req = (required) ? 'required' : '';
+        switch(type) {
+            case 'text':
                 return (
-                    generateMaintenanceSelect(_MAINTENANCES) +""+
-                    generateTimeSpanInput() +""+
-                    generatePriceInput()
+                    "<div class='"+cols+"'>"
+                        +"<input type='text' name='process["+nop+"]["+inputname+"]' class='form-control mb-2' placeholder='"+(placeholder)+"' "+(req)+" />"
+                    +"</div>"
+                );
+            case 'textarea':
+                return (
+                    "<div class='"+cols+"'>"
+                        +"<textarea name='process["+nop+"]["+inputname+"]' class='form-control mb-2' style='height: 100px' placeholder='"+(placeholder)+"' "+(req)+"></textarea>"
+                    +"</div>"
                 );
         }
     }
-    const createProcess = () => {
+
+    //PROCESS VALIDATION ERROR NEM JELENIK MEG nem bajaz
+    const genenerateHTML = (type, nop) => {
+        switch(type){
+            case 1:
+              return (
+                  generateMaintenanceSelect(_MAINTENANCES, nop) +""+
+                  generateTextInput("time_span", "Időtartam(h)", "col-12 col-md-4", nop, 'text') +""+
+                  generateTextInput("price", "Ár(ft)", "col-12 col-md-4", nop, 'text') +""+
+                  addSelfDelete(nop)
+              );
+            case 2:
+              return (
+                  generateTextInput("name", "Anyag neve", "col-12", nop, 'text') +""+
+                  generateTextInput("amount", "Mennyiség (db)", "col-6", nop, 'text') +""+
+                  generateTextInput("price", "Ár(ft)", "col-6", nop, 'text') +""+
+                  addSelfDelete(nop)
+              );
+            case 3:
+              return (
+                  generateTextInput("name", "Alkatrész neve", "col-12 col-md-6", nop, 'text') +""+
+                  generateTextInput("serial", "Alkatrész sorozatszáma", "col-12 col-md-6", nop, 'text') +""+
+                  generateTextInput("amount", "Mennyiség (db)", "col-6", nop, 'text') +""+
+                  generateTextInput("price", "Ár(ft)", "col-6", nop, 'text') +""+
+                  addSelfDelete(nop)
+              );
+            case 4:
+              return (
+                  generateTextInput("name", "Munkafolyamat megnevezése", "col-12", nop, 'text') +""+
+                  generateTextInput("info", "Leírás (nem kötelező)", "col-12", nop, 'textarea', false) +""+
+                  generateTextInput("time_span", "Időtartam (h)", "col-6", nop, 'text') +""+
+                  generateTextInput("price", "Ár(ft)", "col-6", nop, 'text') +""+
+                  addSelfDelete(nop)
+              );
+        }
+    }
+    const deleteSelfAction = (e) => {
+        e.target.parentElement.parentElement.remove();
+        NoP--;
+    }
+
+    const addSelfDelete = (nop) => {
+        const btn = "<button class='mt-2 col-12 btn btn-danger' id='self_delete_"+nop+"'>Elem törlése</button>";
+        console.log(btn)
+        return btn;
+    }
+
+
+    const changeProcessInputs = (e) => {
+        const id = parseInt(e.target.getAttribute('id'));
+        const type = parseInt(e.target.value);
+
+        document.getElementById('input_group_' + id).innerHTML = genenerateHTML(type, id);
+        document.getElementById("self_delete_"+NoP).addEventListener('click', (e) => {
+            e.preventDefault();
+            deleteSelfAction(e);
+        });
+    }
+
+    const createProcess = (type) => {
         NoP++;
         let HTML =
-            "<div class='col-4'>"
-                +"<select name='process["+NoP+"][process]' class='form-select' id='process_id'>"
+            "<div class='col-12 col-md-6 mb-2'>"
+                +"<select name='process["+NoP+"][process]' class='form-select process_selector' id='"+NoP+"'>"
                             +"<option selected value='1'>Általános</option>"
                             +"<option value='2'>Anyag</option>"
                             +"<option value='3'>Alkatrész</option>"
@@ -293,18 +346,24 @@ if(addProcessBtn !== null) {
             +"</div>"
         ;
 
-        HTML += genenerateHTML(1);
-        HTML +=  "<div class='invalid-feedback'>A mezők kitöltése kötelező!</div>";
-        const inputs = document.createElement("div");
-        inputs.className = "row m-0 mb-2 has-validation input-group";
+        HTML += "<div id='input_group_"+NoP+"' class='row p-0'>"+genenerateHTML(type, NoP)+"</span>";
+        const inputs = document.createElement("li");
+        inputs.className = "list-group-item d-flex justify-content-evenly align-items-start row m-0 p-2";
         inputs.setAttribute('id', "process-" + NoP);
         inputs.innerHTML = HTML;
         processHolder.append(inputs);
+        document.getElementById(NoP).addEventListener('change', (e) => {
+            changeProcessInputs(e);
+        });
+        document.getElementById("self_delete_"+NoP).addEventListener('click', (e) => {
+            e.preventDefault();
+            deleteSelfAction(e);
+        });
 
     }
     addProcessBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        createProcess();
+        createProcess(1);
     });
 
 }
