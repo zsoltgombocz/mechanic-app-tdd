@@ -72,6 +72,9 @@
                 @if (auth()->user()->role_id == 1)
                     <hr class="dropdown-divider">
                     <li class="nav-heading">Általad létrehozott:</li>
+                    @if (count(session()->get('created_worksheets')) === 0)
+                        <div class="text-danger text-center w-100">Nincs munkalap!</div>
+                    @endif
                     @foreach (session()->get('created_worksheets') as $ws)
                         <li>
                             <a href="/worksheets/{{ $ws->id }}">
