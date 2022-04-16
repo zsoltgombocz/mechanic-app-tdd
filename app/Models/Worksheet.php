@@ -23,5 +23,15 @@ class Worksheet extends Model
     {
         return $this->hasMany(LabourProcess::class);
     }
+
+    public function used_car_parts()
+    {
+        return $this->hasMany(CarPartProcess::class);
+    }
+
+    public function used_materials()
+    {
+        return $this->hasMany(MaterialProcess::class);
+    }
     use HasFactory;
 }

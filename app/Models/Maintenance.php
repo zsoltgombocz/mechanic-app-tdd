@@ -9,7 +9,7 @@ class Maintenance extends Model
 {
     protected $fillable = ['name'];
     public $timestamps = false;
-
+    protected $table = 'maintenances';
     public function maintenance()
     {
         return $this->belongsTo(LabourProcess::class);
