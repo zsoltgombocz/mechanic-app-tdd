@@ -15,10 +15,11 @@ class CreateUsedMaterialsTable extends Migration
     {
         Schema::create('used_materials', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->string('name');
             $table->integer('amount');
             $table->unsignedBigInteger('worksheet_id');
-            $table->timestamps();
+
 
             $table->foreign('worksheet_id')->references('id')->on('worksheets')->onDelete('cascade');
         });

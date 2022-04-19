@@ -15,11 +15,11 @@ class CreateUsedCarPartsTable extends Migration
     {
         Schema::create('used_car_parts', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->string('name');
             $table->string('serial');
             $table->integer('amount');
             $table->unsignedBigInteger('worksheet_id');
-            $table->timestamps();
 
             $table->foreign('worksheet_id')->references('id')->on('worksheets')->onDelete('cascade');
         });
