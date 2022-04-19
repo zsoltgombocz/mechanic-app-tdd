@@ -39,6 +39,8 @@ Route::middleware(['checkdb', 'auth', 'getworksheets'])->group(function () {
     Route::get('/worksheets/{id}', [WorksheetController::class, 'edit'])->name('Munkalap szerkesztése - ');
     Route::post('/worksheets/update/{id}', [WorksheetController::class, 'update']);
 
+    Route::post('/worksheets/{worksheetid}/process/delete/{type}/{id}', [WorksheetController::class, 'deleteProcess']);
+
 
     Route::get('/ajax/maintenances', [AjaxController::class, 'maintenances']);
 });
