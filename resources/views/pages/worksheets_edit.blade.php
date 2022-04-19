@@ -18,6 +18,8 @@
                     <form class="row g-3 needs-validation" novalidate method="POST"
                         action="/worksheets/update/{{ $worksheet->id }}">
                         @csrf
+                        <h5 class="ms-2 card-title">Munkalap adatok</h5>
+
                         <div class="col-6 mb-3">
                             <label for="loginid" class="form-label">Belépési azonosító</label>
                             <div class="input-group">
@@ -25,7 +27,6 @@
                                     value={{ $worksheet->creator->login_id }}>
                             </div>
                         </div>
-
                         <div class="col-6 mb-3">
                             <label for="mechanicname" class="form-label">Létrehozó neve</label>
                             <div class="input-group">
@@ -64,6 +65,7 @@
                         </div>
 
                         <hr />
+                        <h5 class="ms-2 card-title">Tulajdonos adatai</h5>
                         <div class="col-12 col-md-4 mb-3">
                             <label for="customer_name" class="form-label">Tulajdonos neve:</label>
                             <div class="input-group">
@@ -105,12 +107,63 @@
                             </div>
                         </div>
                         <hr />
-                        <div class="col-12">Felvett munkafolyamatok:</div>
+                        <h5 class=" ms-2 card-title">Felvett munkfolyamatok</h5>
+                        <div class="col-12">
+                            Általános szervíz: <span class="badge bg-primary rounded-pill">&nbsp;</span> |
+                            Anyag: <span class="badge bg-warning rounded-pill">&nbsp;</span> |
+                            Alkatrész: <span class="badge bg-secondary rounded-pill">&nbsp;</span> |
+                            Egyedi: <span class="badge bg-info rounded-pill">&nbsp;</span>
+                        </div>
                         @if (count($labour_processes) !== 0)
-                            @foreach ($labour_processes as $labour)
-                                <p>{{ $labour['name'] }}</p>
+                            @foreach ($labour_processes as $process)
+                                @switch($process['type'])
+                                    @case(1)
+                                        @if ($process['maintenance_id'] != null)
+                                            <div class="list-group-item-primary list-group-item border-1 d-flex flex-row">
+                                                <div class="d-flex w-100 justify-content-center flex-column">
+                                                    <h5 class="mb-1">{{ $process['name'] }}</h5>
+                                                    <small>Időtartam: {{ $process['time_span'] }} óra</small>
+                                                </div>
+                                                <div class="d-flex w-100 justify-content-end align-items-center">
+                                                    <div class="d-flex flex-column align-items-end">
+                                                        <small>{{ $process['created_at'] }}</small>
+                                                        <small class="text-danger fw-bold price">{{ $process['price'] }}
+                                                            ft</small>
+                                                    </div>
+                                                    <div class="d-flex ms-4 me-2 pointer justify-content-center align-items-center">
+                                                        <a class="delete-process"
+                                                            id="delete-process-{{ $worksheet->id }}-{{ $process['type'] }}-{{ $process['id'] }}"
+                                                            href="#" onclick="event.preventDefault();">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="list-group-item-primary list-group-item">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h5 class="mb-1">{{ $process['name'] }}</h5>
+                                                    <small>{{ $process['created_at'] }}</small>
+                                                </div>
+                                                <p class="mb-1">{{ $process['info'] }}</p>
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <small>Időtartam: {{ $process['time_span'] }} óra</small>
+                                                    <small class="text-danger fw-bold price">{{ $process['price'] }} ft</small>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @break
+
+                                    @default
+                                @endswitch
                             @endforeach
-                            <div class="col-12 d-flex align-items-start justify-content-end text-danger fw-700">Összesen: xy
+                            <div class="list-group">
+
+                            </div>
+                            <hr class="bg-danger m-0 fw-bold" />
+                            <div class='col-12 d-flex align-items-start justify-content-end text-danger fw-bold'
+                                id="priceoflabours">Összesen: xy
                                 ft</div>
                         @else
                             <div class="col-12 d-flex text-danger justify-content-center">
