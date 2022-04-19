@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Worksheet;
 use Carbon\Carbon;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,6 +48,28 @@ class WorksheetController extends Controller
         }
 
         return $worksheets->get();
+    }
+
+    public function deleteProcess(Request $request, $worksheetId, $type, $id)
+    {
+        $bigcheck = explode($request->server('HTTP_ORIGIN'), $request->server('HTTP_REFERER'))[1];
+
+        if ($bigcheck == '/worksheets/' . $worksheetId) {
+            switch ($type) {
+                case 1:
+                    LabourProcess::find($id)->delete();
+                    break;
+                case 2:
+                    MaterialProcess::find($id)->delete();
+                    break;
+                case 3:
+                    CarPartProcess::find($id)->delete();
+                    break;
+                case 4:
+                    LabourProcess::find($id)->delete();
+                    break;
+            }
+        }
     }
     /**
      * Display a listing of the resource.
@@ -102,7 +125,6 @@ class WorksheetController extends Controller
         if (Auth::check() && Auth::user()->role_id === 1) {
             $ws = Worksheet::create([
                 'admin_id' => Auth::user()->id,
-                'updated_at' => NULL,
                 'customer_name' => isset($request->customer_name) ? $request->customer_name : NULL,
                 'customer_addr' => isset($request->customer_addr) ? $request->customer_addr : NULL,
                 'vehicle_license' => isset($request->vehicle_license) ? $request->vehicle_license : NULL,
@@ -142,6 +164,25 @@ class WorksheetController extends Controller
         }
         return $result;
     }
+
+    public function convertToArray($collection, $arrayOfInclude = [])
+    {
+        $result = [];
+        foreach ($collection as $el) {
+            $array = [];
+            $created_at = $el->created_at;
+            $array = array_merge($array, $el->toArray());
+            $array = array_merge($array, ['created_at' => $created_at]);
+            $array = array_merge($array, $arrayOfInclude);
+
+            if ($el->maintenance_id != null) {
+                $name = Maintenance::find($el->maintenance_id)->name;
+                $array = array_merge($array, ['name' => $name]);
+            }
+            array_push($result, $array);
+        }
+        return $result;
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -157,13 +198,12 @@ class WorksheetController extends Controller
         $mechanics = User::all();
         $worksheet['created_at_html'] = Carbon::createFromTimeString($worksheet['created_at'])->toDateTimeLocalString();
 
-        $lp = $worksheet->labour_process->toArray();
-        $lp = $this->addAdditionalData($lp);
-        $ucp = $worksheet->used_car_parts->toArray();
-        $um = $worksheet->used_materials->toArray();
+        $lp = $this->convertToArray($worksheet->labour_process, ['type' => 1]);
+        $ucp = $this->convertToArray($worksheet->used_car_parts, ['type' => 2]);
+        $um = $this->convertToArray($worksheet->used_materials, ['type' => 3]);
+
         $labors = array_merge($lp, $ucp, $um);
-        shuffle($lp);
-        usort($lp, array($this, 'asc'));
+
         return view('pages.worksheets_edit', [
             'labour_processes' => $labors,
             'mechanics' => $mechanics,
