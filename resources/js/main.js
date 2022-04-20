@@ -220,10 +220,58 @@ const { create } = require("lodash");
   }
 
 })();
+const calculatePrices = () => {
+    const prices = document.getElementsByClassName('price');
+    if(prices.length !== 0) {
+        let sumOfPrices = 0;
+        for(let price of prices) {
+            const p = parseInt(price.innerHTML.split(' ft')[0].trim());
+            sumOfPrices += p;
+        }
+        document.getElementById('priceoflabours').innerHTML = "Összesen: " + sumOfPrices + " Ft";
+    }
+}
+
+const togglePrint = () => {
+    if(window.location.pathname.split('/')[3] === 'pdf') {
+        window.print();
+    }
+}
 
 const processHolder = document.getElementById('processHolder') || null;
 const addProcessBtn = document.getElementById('addProcess') || null;
 let NoP = 0;
+const deleteBtns = document.getElementsByClassName('delete-process');
+if(deleteBtns.length !== 0){
+    for(let delete_icon of deleteBtns) {
+        delete_icon.addEventListener('click', (e) => {
+            const wsid = e.target.parentElement.getAttribute('id').split('-')[2];
+            const type = e.target.parentElement.getAttribute('id').split('-')[3];
+            const id = e.target.parentElement.getAttribute('id').split('-')[4];
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                },
+                async: true
+            });
+            $.ajax({
+                type:'POST',
+                url:`/worksheets/${wsid}/process/delete/${type}/${id}`,
+                success:function(data) {
+                    document.getElementById(e.target.parentElement.getAttribute('id')).closest('.list-group-item').remove();
+                    if(document.getElementsByClassName('price').length === 0) {
+                        window.location = window.location.pathname;
+                        calculatePrices();
+                    }
+
+                }
+                });
+        });
+    }
+}
+calculatePrices();
+togglePrint();
+
 if(addProcessBtn !== null) {
     const getMaintenances = async () => {
         let gotData = null;
@@ -246,41 +294,7 @@ if(addProcessBtn !== null) {
         });
         _MAINTENANCES = await getMaintenances();
     });
-    const prices = document.getElementsByClassName('price');
 
-    if(prices.length !== 0) {
-        let sumOfPrices = 0;
-        for(let price of prices) {
-            const p = parseInt(price.innerHTML.split(' ft')[0].trim());
-            sumOfPrices += p;
-        }
-
-        document.getElementById('priceoflabours').innerHTML = "Összesen: " + sumOfPrices + " Ft";
-        for(let delete_icon of document.getElementsByClassName('delete-process')) {
-            delete_icon.addEventListener('click', (e) => {
-                const wsid = e.target.parentElement.getAttribute('id').split('-')[2];
-                const type = e.target.parentElement.getAttribute('id').split('-')[3];
-                const id = e.target.parentElement.getAttribute('id').split('-')[4];
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                    },
-                    async: true
-                });
-                $.ajax({
-                    type:'POST',
-                    url:`/worksheets/${wsid}/process/delete/${type}/${id}`,
-                    success:function(data) {
-                        document.getElementById(e.target.parentElement.getAttribute('id')).closest('.list-group-item').remove();
-                        if(document.getElementsByClassName('price').length === 0) {
-                            window.location = window.location.pathname;
-                        }
-
-                    }
-                 });
-            });
-        }
-    }
 
     const generateMaintenanceSelect = (object, nop) => {
         let html = "<div class='col-12 col-md-4 mb-2'><select name='process["+nop+"][maintenance]' class='form-select' id='maintenance_id'>";
