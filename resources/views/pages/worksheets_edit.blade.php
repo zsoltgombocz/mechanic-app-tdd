@@ -206,10 +206,7 @@
                                     @default
                                 @endswitch
                             @endforeach
-                            <div class="list-group">
-
-                            </div>
-                            <hr class="bg-danger m-0 fw-bold" />
+                            <hr class="bg-danger m-0 fw-bold mt-4" />
                             <div class='col-12 d-flex align-items-start justify-content-end text-danger fw-bold'
                                 id="priceoflabours">Összesen: xy
                                 ft</div>
@@ -249,7 +246,7 @@
                             <button class="btn btn-success w-100" type="submit">Mentés</button>
                             @if ($worksheet['payment'] != -1 && $worksheet['closed'] == 1)
                                 <button class="btn btn-secondary w-100 mt-2"
-                                    onclick="event.preventDefault(); window.location = '/worksheets/{{ $worksheet['id'] }}/pdf';">Nyomtatás</button>
+                                    onclick="event.preventDefault(); window.open('/worksheets/{{ $worksheet['id'] }}/pdf', '_blank');">Nyomtatás</button>
                             @endif
                         </div>
                     </form>

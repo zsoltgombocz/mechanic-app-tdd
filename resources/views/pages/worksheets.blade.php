@@ -120,7 +120,7 @@
                                 <p class="text-success w-100 text-center">A munkalap fizetve, és zárolva!</p>
                                 <p class="w-100 text-center">
                                     <i class="bi bi-printer fs-2 pointer"
-                                        onclick="event.preventDefault(); window.location = '/worksheets/{{ $ws->id }}/pdf';"></i>
+                                        onclick="event.preventDefault(); window.open('/worksheets/{{ $ws->id }}/pdf', '_blank');"></i>
                                 </p>
                             </b>
                         @endif
