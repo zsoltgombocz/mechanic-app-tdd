@@ -60,10 +60,10 @@ class WorksheetController extends Controller
                     LabourProcess::find($id)->delete();
                     break;
                 case 2:
-                    MaterialProcess::find($id)->delete();
+                    CarPartProcess::find($id)->delete();
                     break;
                 case 3:
-                    CarPartProcess::find($id)->delete();
+                    MaterialProcess::find($id)->delete();
                     break;
                 case 4:
                     LabourProcess::find($id)->delete();
@@ -112,6 +112,13 @@ class WorksheetController extends Controller
             $mechanics = User::all();
             return view('pages.worksheets_create', ['mechanics' => $mechanics, 'datetime' => $datetime]);
         } else return redirect('/');
+    }
+
+    public function downloadPDF($id)
+    {
+        $ws = Worksheet::find($id);
+
+        return view('worksheet_pdf', ['worksheet' => $ws]);
     }
 
     /**
@@ -249,6 +256,10 @@ class WorksheetController extends Controller
                         $this->saveProcess($id, $request->process);
                     }
                 }
+
+                Worksheet::find($id)->update([
+                    'payment' =>  $request->payment,
+                ]);
 
                 return redirect("worksheets/" . $id)->with(['alert' => [
                     'type' => 'success',
