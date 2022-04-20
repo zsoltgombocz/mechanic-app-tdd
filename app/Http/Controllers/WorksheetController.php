@@ -117,8 +117,13 @@ class WorksheetController extends Controller
     public function downloadPDF($id)
     {
         $ws = Worksheet::find($id);
+        $labours = $this->getLabours($ws);
+        $price = 0;
+        foreach ($labours as $l) {
+            $price += $l['price'];
+        }
 
-        return view('worksheet_pdf', ['worksheet' => $ws]);
+        return view('worksheet_pdf', ['worksheet' => $ws, 'labours' => $labours, 'price' => $price]);
     }
 
     /**
@@ -190,6 +195,15 @@ class WorksheetController extends Controller
         }
         return $result;
     }
+
+    public function getLabours($worksheet)
+    {
+        $lp = $this->convertToArray($worksheet->labour_process, ['type' => 1]);
+        $ucp = $this->convertToArray($worksheet->used_car_parts, ['type' => 2]);
+        $um = $this->convertToArray($worksheet->used_materials, ['type' => 3]);
+
+        return array_merge($lp, $ucp, $um);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -205,14 +219,10 @@ class WorksheetController extends Controller
         $mechanics = User::all();
         $worksheet['created_at_html'] = Carbon::createFromTimeString($worksheet['created_at'])->toDateTimeLocalString();
 
-        $lp = $this->convertToArray($worksheet->labour_process, ['type' => 1]);
-        $ucp = $this->convertToArray($worksheet->used_car_parts, ['type' => 2]);
-        $um = $this->convertToArray($worksheet->used_materials, ['type' => 3]);
-
-        $labors = array_merge($lp, $ucp, $um);
+        $labours = $this->getLabours($worksheet);
 
         return view('pages.worksheets_edit', [
-            'labour_processes' => $labors,
+            'labour_processes' => $labours,
             'mechanics' => $mechanics,
             'worksheet' => $worksheet,
             'extendRouteName' => [
