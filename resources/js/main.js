@@ -246,34 +246,40 @@ if(addProcessBtn !== null) {
         });
         _MAINTENANCES = await getMaintenances();
     });
-
     const prices = document.getElementsByClassName('price');
-    let sumOfPrices = 0;
-    for(let price of prices) {
-        const p = parseInt(price.innerHTML.slice(' ft')[0]);
-        sumOfPrices += p;
-    }
-    console.log(sumOfPrices)
-    document.getElementById('priceoflabours').innerHTML = "Összesen: " + sumOfPrices + " Ft";
-    for(let delete_icon of document.getElementsByClassName('delete-process')) {
-        delete_icon.addEventListener('click', (e) => {
-            const wsid = e.target.parentElement.getAttribute('id').split('-')[2];
-            const type = e.target.parentElement.getAttribute('id').split('-')[3];
-            const id = e.target.parentElement.getAttribute('id').split('-')[4];
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                },
-                async: true
+
+    if(prices.length !== 0) {
+        let sumOfPrices = 0;
+        for(let price of prices) {
+            const p = parseInt(price.innerHTML.split(' ft')[0].trim());
+            sumOfPrices += p;
+        }
+
+        document.getElementById('priceoflabours').innerHTML = "Összesen: " + sumOfPrices + " Ft";
+        for(let delete_icon of document.getElementsByClassName('delete-process')) {
+            delete_icon.addEventListener('click', (e) => {
+                const wsid = e.target.parentElement.getAttribute('id').split('-')[2];
+                const type = e.target.parentElement.getAttribute('id').split('-')[3];
+                const id = e.target.parentElement.getAttribute('id').split('-')[4];
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    },
+                    async: true
+                });
+                $.ajax({
+                    type:'POST',
+                    url:`/worksheets/${wsid}/process/delete/${type}/${id}`,
+                    success:function(data) {
+                        document.getElementById(e.target.parentElement.getAttribute('id')).closest('.list-group-item').remove();
+                        if(document.getElementsByClassName('price').length === 0) {
+                            window.location = window.location.pathname;
+                        }
+
+                    }
+                 });
             });
-            $.ajax({
-                type:'POST',
-                url:`/worksheets/${wsid}/process/delete/${type}/${id}`,
-                success:function(data) {
-                    document.getElementById(e.target.parentElement.getAttribute('id')).closest('.list-group-item').remove();
-                }
-             });
-        });
+        }
     }
 
     const generateMaintenanceSelect = (object, nop) => {
