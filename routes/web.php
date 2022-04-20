@@ -41,6 +41,7 @@ Route::middleware(['checkdb', 'auth', 'getworksheets'])->group(function () {
 
     Route::post('/worksheets/{worksheetid}/process/delete/{type}/{id}', [WorksheetController::class, 'deleteProcess']);
 
+    Route::get('/worksheets/{id}/pdf', [WorksheetController::class, 'downloadPDF']);
 
     Route::get('/ajax/maintenances', [AjaxController::class, 'maintenances']);
 });
