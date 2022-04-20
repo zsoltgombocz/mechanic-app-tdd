@@ -110,8 +110,8 @@
                         <h5 class=" ms-2 card-title">Felvett munkfolyamatok</h5>
                         <div class="col-12">
                             Általános szervíz: <span class="badge bg-primary rounded-pill">&nbsp;</span> |
-                            Anyag: <span class="badge bg-warning rounded-pill">&nbsp;</span> |
-                            Alkatrész: <span class="badge bg-secondary rounded-pill">&nbsp;</span> |
+                            Alkatrész: <span class="badge bg-warning rounded-pill">&nbsp;</span> |
+                            Anyag: <span class="badge bg-secondary rounded-pill">&nbsp;</span> |
                             Egyedi: <span class="badge bg-info rounded-pill">&nbsp;</span>
                         </div>
                         @if (count($labour_processes) !== 0)
@@ -141,7 +141,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <div class="list-group-item-primary list-group-item">
+                                            <div class="list-group-item-primary list-group-item border-1">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <h5 class="mb-1">{{ $process['name'] }}</h5>
                                                     <small>{{ $process['created_at'] }}</small>
@@ -153,6 +153,54 @@
                                                 </div>
                                             </div>
                                         @endif
+                                    @break
+
+                                    @case(2)
+                                        <div class="list-group-item-warning list-group-item border-1 d-flex flex-row">
+                                            <div class="d-flex w-100 justify-content-center flex-column">
+                                                <h5 class="mb-1">{{ $process['name'] }}</h5>
+                                                <small>Darab: {{ $process['amount'] }} db</small>
+                                            </div>
+                                            <div class="d-flex w-100 justify-content-end align-items-center">
+                                                <div class="d-flex flex-column align-items-end">
+                                                    <small>{{ $process['created_at'] }}</small>
+                                                    <small class="text-danger fw-bold price">{{ $process['price'] }}
+                                                        ft</small>
+                                                </div>
+                                                <div class="d-flex ms-4 me-2 pointer justify-content-center align-items-center">
+                                                    <a class="delete-process"
+                                                        id="delete-process-{{ $worksheet->id }}-{{ $process['type'] }}-{{ $process['id'] }}"
+                                                        href="#" onclick="event.preventDefault();">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @break
+
+                                    @case(3)
+                                        <div class="list-group-item-secondary list-group-item border-1 d-flex flex-row">
+                                            <div class="d-flex w-100 justify-content-center flex-column">
+                                                <h5 class="mb-1">{{ $process['name'] }}</h5>
+                                                <small>Darab: {{ $process['amount'] }} db</small>
+                                            </div>
+                                            <div class="d-flex w-100 justify-content-end align-items-center">
+                                                <div class="d-flex flex-column align-items-end">
+                                                    <small>{{ $process['created_at'] }}</small>
+                                                    <small class="text-danger fw-bold price">{{ $process['price'] }}
+                                                        ft</small>
+                                                </div>
+                                                <div class="d-flex ms-4 me-2 pointer justify-content-center align-items-center">
+                                                    <a class="delete-process"
+                                                        id="delete-process-{{ $worksheet->id }}-{{ $process['type'] }}-{{ $process['id'] }}"
+                                                        href="#" onclick="event.preventDefault();">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
                                     @break
 
                                     @default
@@ -170,10 +218,11 @@
                                 Nincs megjelenthető munkafolyamat!
                             </div>
                         @endif
-
-                        <div class="col-12">
-                            <button class="btn btn-primary w-100" id="addProcess">Munkafolyamat felvétele</button>
-                        </div>
+                        @if ($worksheet['closed'] == 0)
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100" id="addProcess">Munkafolyamat felvétele</button>
+                            </div>
+                        @endif
                         <ul id="processHolder" class="list-group list-group"></ul>
                         @if (auth()->user()->role_id === 1)
                             <hr />
@@ -198,6 +247,10 @@
                         @endif
                         <div class="col-12">
                             <button class="btn btn-success w-100" type="submit">Mentés</button>
+                            @if ($worksheet['payment'] != -1 && $worksheet['closed'] == 1)
+                                <button class="btn btn-secondary w-100 mt-2"
+                                    onclick="event.preventDefault(); window.location = '/worksheets/{{ $worksheet['id'] }}/pdf';">Nyomtatás</button>
+                            @endif
                         </div>
                     </form>
 

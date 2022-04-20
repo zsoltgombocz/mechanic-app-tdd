@@ -78,8 +78,13 @@
                     @foreach (session()->get('created_worksheets') as $ws)
                         <li>
                             <a href="/worksheets/{{ $ws->id }}">
-                                <i
-                                    class="bi bi-circle"></i><span>{{ isset($ws->customer_name) ? $ws->customer_name . ' - ' . $ws->id : 'Munkalap - ' . $ws->id }}</span>
+                                <i class="bi bi-circle"></i>
+                                <span
+                                    class="d-flex justify-content-center align-items-center {{ $ws->closed == 1 && $ws->payment != -1 ? 'text-success' : '' }} {{ $ws->closed == 1 && $ws->payment == -1 ? 'text-danger' : '' }}">
+                                    {{ isset($ws->customer_name) ? $ws->customer_name . ' - ' . $ws->id : 'Munkalap - ' . $ws->id }}
+                                    {!! $ws->closed == 1 && $ws->payment == -1 ? ' - <i class="bi bi-x-lg fs-5"></i>' : '' !!}
+                                    {!! $ws->closed == 1 && $ws->payment != -1 ? ' - <i class="bi bi-check-lg fs-5"></i>' : '' !!}
+                                </span>
                             </a>
                         </li>
                     @endforeach
