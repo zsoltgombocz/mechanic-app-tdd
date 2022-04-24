@@ -11,7 +11,7 @@
         @endif
         @if (auth()->user()->role_id == 1)
             <li class="nav-item">
-                <a class="nav-link" data-bs-target="#mechanics-nav" data-bs-toggle="collapse" href="#">
+                <a class="nav-link collapsed" data-bs-target="#mechanics-nav" data-bs-toggle="collapse" href="#">
                     <i class="bi bi-people"></i>
                     <span>Szerelők kezelése</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
