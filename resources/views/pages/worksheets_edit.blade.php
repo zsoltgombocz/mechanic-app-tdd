@@ -234,7 +234,7 @@
                                 <select name="payment" class="form-select mb-3" id="payment">
                                     <option {{ !isset($worksheet['payment']) ? 'selected' : '' }} value="-1">Még nincs
                                         fizetve</option>
-                                    <option {{ $worksheet['payment'] === 0 ? 'selected' : '' }} value="0">Kézpénz
+                                    <option {{ $worksheet['payment'] === 0 ? 'selected' : '' }} value="0">Készpénz
                                     </option>
                                     <option {{ $worksheet['payment'] === 1 ? 'selected' : '' }} value="1">Bankkártya
                                     </option>
