@@ -80,10 +80,10 @@ class WorksheetController extends Controller
     {
         if (Auth::check()) {
             $q = Worksheet::query();
+            $order = isset($date) ? $request->query('date') : 'desc';
             if (Auth::user()->role_id === 1) {
                 $date = $request->query('date');
                 $closed = $request->query('closed');
-                $order = isset($date) ? $request->query('date') : 'desc';
                 if (isset($closed)) {
                     if ($closed === 'true') {
                         $q = $q->having('closed', '=', 1);
@@ -94,8 +94,10 @@ class WorksheetController extends Controller
                 $q = $q->orderBy('created_at', $order);
                 $worksheets = $this->getWorksheets($request->query('search'), $q);
             } else {
-                $q = $q->having('mechanic_id', '=', Auth::user()->id);
+                $q = $q->having('mechanic_id', '=', Auth::user()->id)->having('closed', '=', 0);
+                $q = $q->orderBy('created_at', $order);
                 $worksheets = $this->getWorksheets($request->query('search'), $q);
+                $closed = 'false';
             }
             return view('pages.worksheets', ['closed' => $closed, 'order' => $order, 'search' => $request->query('search'), 'worksheets' => $worksheets]);
         } else return redirect('/');
