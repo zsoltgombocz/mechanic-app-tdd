@@ -42,11 +42,11 @@
         @foreach ($worksheets as $ws)
             <div class="col-12 col-md-6">
                 <div
-                    class="card
+                    class="card h-100
                     {{ $ws->closed == 1 && $ws->payment == -1 ? 'border-danger border-1 border' : '' }}
                     {{ $ws->closed == 1 && $ws->payment != -1 ? 'border-success border-1 border' : '' }}
                 ">
-                    <div class="card-body">
+                    <div class="card-body h-100 d-flex flex-column">
                         <div class="card-title d-flex justify-content-between align-items-center m-0 p-0">
                             <h4 class="card-title">
                                 {{ isset($ws->customer_name) ? $ws->customer_name . ' - ' . $ws->id : 'Munkalap - ' . $ws->id }}
@@ -101,29 +101,31 @@
                             <hr />
                             <p><b>Fizetve:</b>
                                 @if ($ws->payment == 0)
-                                    <span class='text-success'>Kézpénz</span>
+                                    <span class='text-success'>Készpénz</span>
                                 @else
                                     <span class='text-success'>Bankkártya</span>
                                 @endif
                             </p>
                         @endif
-                        @if ($ws->payment == -1 && $ws->closed == 1)
-                            <b>
-                                <p class="text-danger w-100 text-center">A munkalap zárolva, de nincs fizetve!</p>
-                            </b>
-                        @elseif ($ws->payment != -1 && $ws->closed == 0)
-                            <b>
-                                <p class="text-danger w-100 text-center">A munkalap fizetve, de nincs zárolva!</p>
-                            </b>
-                        @elseif ($ws->payment != -1 && $ws->closed == 1)
-                            <b>
-                                <p class="text-success w-100 text-center">A munkalap fizetve, és zárolva!</p>
-                                <p class="w-100 text-center">
-                                    <i class="bi bi-printer fs-2 pointer"
-                                        onclick="event.preventDefault(); window.open('/worksheets/{{ $ws->id }}/pdf', '_blank');"></i>
-                                </p>
-                            </b>
-                        @endif
+                        <div class="d-flex flex-fill flex-grow-1 h-100 justify-content-center align-items-center">
+                            @if ($ws->payment == -1 && $ws->closed == 1)
+                                <b>
+                                    <p class="text-danger w-100 text-center">A munkalap zárolva, de nincs fizetve!</p>
+                                </b>
+                            @elseif ($ws->payment != -1 && $ws->closed == 0)
+                                <b>
+                                    <p class="text-danger w-100 text-center">A munkalap fizetve, de nincs zárolva!</p>
+                                </b>
+                            @elseif ($ws->payment != -1 && $ws->closed == 1)
+                                <b>
+                                    <p class="text-success w-100 text-center">A munkalap fizetve, és zárolva!</p>
+                                    <p class="w-100 text-center">
+                                        <i class="bi bi-printer fs-2 pointer"
+                                            onclick="event.preventDefault(); window.open('/worksheets/{{ $ws->id }}/pdf', '_blank');"></i>
+                                    </p>
+                                </b>
+                            @endif
+                        </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between">
                         <div classs="d-flex">
