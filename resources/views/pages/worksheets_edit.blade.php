@@ -141,15 +141,26 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <div class="list-group-item-primary list-group-item border-1">
-                                                <div class="d-flex w-100 justify-content-between">
+                                            <div class="list-group-item-info list-group-item border-1 d-flex flex-row">
+                                                <div class="d-flex w-100 justify-content-center flex-column">
                                                     <h5 class="mb-1">{{ $process['name'] }}</h5>
-                                                    <small>{{ $process['created_at'] }}</small>
-                                                </div>
-                                                <p class="mb-1">{{ $process['info'] }}</p>
-                                                <div class="d-flex w-100 justify-content-between">
+                                                    <p>{{ $process['info'] }}</p>
                                                     <small>Időtartam: {{ $process['time_span'] }} óra</small>
-                                                    <small class="text-danger fw-bold price">{{ $process['price'] }} ft</small>
+                                                </div>
+                                                <div class="d-flex w-100 justify-content-end align-items-center">
+                                                    <div class="d-flex flex-column align-items-end">
+                                                        <small>{{ $process['created_at'] }}</small>
+                                                        <small class="text-danger fw-bold price">{{ $process['price'] }}
+                                                            ft</small>
+                                                    </div>
+                                                    <div class="d-flex ms-4 me-2 pointer justify-content-center align-items-center">
+                                                        <a class="delete-process"
+                                                            id="delete-process-{{ $worksheet->id }}-{{ $process['type'] }}-{{ $process['id'] }}"
+                                                            href="#" onclick="event.preventDefault();">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         @endif
