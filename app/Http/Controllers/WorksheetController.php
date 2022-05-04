@@ -218,6 +218,10 @@ class WorksheetController extends Controller
         if ($worksheet === null) {
             return redirect('/worksheets')->with(['alert' => ['type' => 'danger', 'message' => 'Nem létezik ez a munkalap!']]);
         }
+        if ($worksheet->closed == 1 && Auth::user()->role_id == 2) {
+            return redirect('/worksheets')->with(['alert' => ['type' => 'danger', 'message' => 'A munkalap zárolva van!']]);
+        }
+
         $mechanics = User::all();
         $worksheet['created_at_html'] = Carbon::createFromTimeString($worksheet['created_at'])->toDateTimeLocalString();
 
@@ -301,7 +305,7 @@ class WorksheetController extends Controller
     {
         foreach ($processArray as $process) {
             switch ($process['process']) {
-                case 1:
+                case "1":
                     LabourProcess::create([
                         'worksheet_id' => $id,
                         'time_span' => $process['time_span'],
@@ -309,7 +313,7 @@ class WorksheetController extends Controller
                         'price' => $process['price']
                     ]);
                     break;
-                case 2:
+                case "2":
                     MaterialProcess::create([
                         'worksheet_id' => $id,
                         'name' => $process['name'],
@@ -317,7 +321,7 @@ class WorksheetController extends Controller
                         'price' => $process['price']
                     ]);
                     break;
-                case 3:
+                case "3":
                     CarPartProcess::create([
                         'worksheet_id' => $id,
                         'name' => $process['name'],
@@ -326,7 +330,7 @@ class WorksheetController extends Controller
                         'price' => $process['price']
                     ]);
                     break;
-                case 4:
+                case "4":
                     LabourProcess::create([
                         'worksheet_id' => $id,
                         'name' => $process['name'],
