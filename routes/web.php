@@ -22,6 +22,10 @@ use Symfony\Component\HttpKernel\DataCollector\AjaxDataCollector;
 |
 */
 
+if (App::environment('production')) {
+    URL::forceScheme('https');
+}
+
 Route::middleware(['checkdb', 'auth', 'getworksheets'])->group(function () {
     Route::get('/', [MainPageController::class, 'index'])->name('Kezdőlap');
     Route::get('/mechanics', [MechanicController::class, 'index'])->name('Szerelők');
@@ -54,7 +58,3 @@ Route::middleware(['checkdb', 'guest'])->group(function () {
 });
 
 Route::get('/dbstatus', [DatabaseRouteController::class, 'index'])->name('Adatbázis kapcsolat');
-
-if (App::environment('production')) {
-    URL::forceScheme('https');
-}
