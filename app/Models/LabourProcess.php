@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LabourProcess extends Model
 {
-    protected $fillable = ['worksheet_id', 'maintenance_id', 'time_span', 'price'];
+    protected $fillable = ['worksheet_id', 'maintenance_id', 'time_span', 'price', 'name', 'info'];
     protected $table = 'labour_processes';
 
     public function maintenance()
