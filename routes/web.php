@@ -6,7 +6,9 @@ use App\Http\Controllers\DatabaseRouteController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\MechanicController;
 use App\Http\Controllers\WorksheetController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpKernel\DataCollector\AjaxDataCollector;
 
 /*
@@ -52,3 +54,7 @@ Route::middleware(['checkdb', 'guest'])->group(function () {
 });
 
 Route::get('/dbstatus', [DatabaseRouteController::class, 'index'])->name('Adatbázis kapcsolat');
+
+if (App::environment('production')) {
+    URL::forceScheme('https');
+}
