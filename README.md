@@ -1,5 +1,5 @@
 Link to full documentation:
-shorturl.at/ovGR0
+https://shorturl.at/ovGR0
 
 Alternate link:
 https://docs.google.com/document/d/1o6ezy52--X3ziTpvVy_yXtGEoYT0JsRQ8xjCRltsVmo
