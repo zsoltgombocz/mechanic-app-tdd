@@ -1,4 +1,8 @@
-https://www.youtube.com/watch?v=dQw4w9WgXcQ
+Link to full documentation:
+shorturl.at/ovGR0
+
+Alternate link:
+https://docs.google.com/document/d/1o6ezy52--X3ziTpvVy_yXtGEoYT0JsRQ8xjCRltsVmo
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
